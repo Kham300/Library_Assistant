@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -32,12 +31,10 @@ import java.util.logging.Logger;
 
 public class MainController implements Initializable {
 
-
     private final String ADDMEMBER_FXML = "/library/assistant/ui/addMember/memberAdd.fxml";
     private final String ADDBOOK_FXML = "/library/assistant/ui/addBook/add_book.fxml";
     private final String LISTBOOK_FXML = "/library/assistant/ui/listbook/book_list.fxml";
     private final String LISTMEMBER_FXML = "/library/assistant/ui/memberList/member_list.fxml";
-
 
     @FXML
     private TextField bookIDInput;
@@ -62,9 +59,9 @@ public class MainController implements Initializable {
     @FXML
     private ListView<String> issueDataList;
 
+    Boolean isReadyForSubmission = false;
+
     DBHandler dbHandler;
-
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -97,6 +94,7 @@ public class MainController implements Initializable {
     @FXML
     void loadBookAboutInfo() {
         ObservableList<String> issueData = FXCollections.observableArrayList();
+        isReadyForSubmission = false;
 
         String id = aboutBookID.getText();
         String qu = "SELECT * FROM ISSUE WHERE bookID = '" + id + "'";
@@ -129,13 +127,12 @@ public class MainController implements Initializable {
                     issueData.add("Contact: " + rsM.getString("mobile"));
                     issueData.add("Email: " + rsM.getString("email"));
                 }
+                isReadyForSubmission = true;
             }
         } catch (SQLException e){
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, e);
         }
-
         issueDataList.getItems().setAll(issueData);
-
     }
 
     @FXML
@@ -240,6 +237,48 @@ public class MainController implements Initializable {
         }
     }
 
+    @FXML
+    void loadSubmissionOperations() {
+        if (!isReadyForSubmission) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select book to submit");
+            alert.showAndWait();
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Submission Operation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure to return the book ?");
+
+        Optional<ButtonType> responce = alert.showAndWait();
+        if (responce.get() == ButtonType.OK) {
+            String id = aboutBookID.getText();
+            String ac1 = "DELETE FROM ISSUE WHERE BOOKID = '" + id + "'";
+            String ac2 = "UPDATE BOOK SET ISAVAIL = TRUE WHERE ID = '" + id + "'";
+
+            if (dbHandler.executAction(ac1) && dbHandler.executAction(ac2)) {
+                Alert alertInf = new Alert(Alert.AlertType.INFORMATION);
+                alertInf.setTitle("Successes");
+                alertInf.setHeaderText(null);
+                alertInf.setContentText("Book has been submitted");
+                alertInf.showAndWait();
+            } else {
+                Alert alertErr = new Alert(Alert.AlertType.ERROR);
+                alertErr.setTitle("Failed");
+                alertErr.setHeaderText(null);
+                alertErr.setContentText("Submission has been failed");
+                alertErr.showAndWait();
+            }
+        } else {
+            Alert informationAlert = new Alert(Alert.AlertType.INFORMATION);
+            informationAlert.setTitle("Cancelled");
+            informationAlert.setHeaderText(null);
+            informationAlert.setContentText("Submission operation Cancelled");
+        }
+    }
 
     void clearBookCache(){
         bookName.setText("");
