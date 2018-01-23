@@ -203,7 +203,7 @@
                                  <bottom>
                                     <HBox alignment="CENTER" prefHeight="68.0" prefWidth="560.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <JFXButton prefHeight="37.0" prefWidth="98.0" styleClass="setup-button" stylesheets="@main.css" text="Renew">
+                                          <JFXButton onAction="#loadRenewOperation" prefHeight="37.0" prefWidth="98.0" styleClass="setup-button" stylesheets="@main.css" text="Renew">
                                              <graphic>
                                                 <ImageView fitHeight="32.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>

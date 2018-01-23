@@ -97,7 +97,7 @@ public class MainController implements Initializable {
         isReadyForSubmission = false;
 
         String id = aboutBookID.getText();
-        String qu = "SELECT * FROM ISSUE WHERE bookID = '" + id + "'";
+        String qu = "SELECT * FROM ISSUE WHERE BOOKID = '" + id + "'";
         ResultSet resultSet = dbHandler.executQuery(qu);
         try{
             while (resultSet.next()) {
@@ -280,6 +280,48 @@ public class MainController implements Initializable {
         }
     }
 
+    @FXML
+    void loadRenewOperation() {
+
+        if (!isReadyForSubmission) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Failed");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select book to renew");
+            alert.showAndWait();
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Renew Operation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure to renew the book ?");
+
+        Optional<ButtonType> responce = alert.showAndWait();
+        if (responce.get() == ButtonType.OK) {
+            String ac = "UPDATE ISSUE SET issueTime = CURRENT_TIMESTAMP, renew_count = renew_count + 1 WHERE BOOKID = '" + aboutBookID.getText() + "'";
+            System.out.println(ac);
+            if(dbHandler.executAction(ac)){
+                Alert alertSuccesses = new Alert(Alert.AlertType.INFORMATION);
+                alertSuccesses.setTitle("Successes");
+                alertSuccesses.setHeaderText(null);
+                alertSuccesses.setContentText("The book has been renewed");
+                alertSuccesses.showAndWait();
+            } else {
+                Alert alertErr = new Alert(Alert.AlertType.ERROR);
+                alertErr.setTitle("Failed");
+                alertErr.setHeaderText(null);
+                alertErr.setContentText("Renew has been failed");
+                alertErr.showAndWait();
+            }
+        } else {
+            Alert informationAlert = new Alert(Alert.AlertType.INFORMATION);
+            informationAlert.setTitle("Cancelled");
+            informationAlert.setHeaderText(null);
+            informationAlert.setContentText("Renew operation Cancelled");
+        }
+    }
+
     void clearBookCache(){
         bookName.setText("");
         author.setText("");
@@ -290,4 +332,6 @@ public class MainController implements Initializable {
         memberName.setText("");
         memberContact.setText("");
     }
+
+
 }
