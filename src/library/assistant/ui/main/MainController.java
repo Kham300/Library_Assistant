@@ -35,6 +35,7 @@ public class MainController implements Initializable {
     private final String ADDBOOK_FXML = "/library/assistant/ui/addBook/add_book.fxml";
     private final String LISTBOOK_FXML = "/library/assistant/ui/listbook/book_list.fxml";
     private final String LISTMEMBER_FXML = "/library/assistant/ui/memberList/member_list.fxml";
+    private final String SETTINGS_FXML = "/library/assistant/settings/settings.fxml";
 
     @FXML
     private TextField bookIDInput;
@@ -84,6 +85,11 @@ public class MainController implements Initializable {
     @FXML
     void loadBookTable() {
         loadWindow(LISTBOOK_FXML, "Book List");
+    }
+
+    @FXML
+    void loadSettings() {
+        loadWindow(SETTINGS_FXML, "Settings");
     }
 
     @FXML
@@ -332,6 +338,4 @@ public class MainController implements Initializable {
         memberName.setText("");
         memberContact.setText("");
     }
-
-
 }
