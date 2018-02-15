@@ -14,10 +14,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import library.assistant.database.DBHandler;
+import library.assistant.utils.LibraryAssistantUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -59,6 +61,8 @@ public class MainController implements Initializable {
     private JFXTextField aboutBookID;
     @FXML
     private ListView<String> issueDataList;
+    @FXML
+    private StackPane rootPane;
 
     Boolean isReadyForSubmission = false;
 
@@ -199,6 +203,7 @@ public class MainController implements Initializable {
             stage.setTitle(title);
             stage.setScene(new Scene(parent));
             stage.show();
+            LibraryAssistantUtils.setStageIcon(stage);
         } catch (IOException e) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -326,6 +331,42 @@ public class MainController implements Initializable {
             informationAlert.setHeaderText(null);
             informationAlert.setContentText("Renew operation Cancelled");
         }
+    }
+
+    @FXML
+    void handleMenuClose() {
+        ((Stage)rootPane.getScene().getWindow()).close();
+    }
+
+    @FXML
+    void handleMenuAddBook() {
+        loadWindow(ADDBOOK_FXML, "Add New Book");
+    }
+
+    @FXML
+    void handleMenuAddMember() {
+        loadWindow(ADDMEMBER_FXML, "Add New Member");
+    }
+
+    @FXML
+    void handleMenuViewBook() {
+        loadWindow(LISTBOOK_FXML, "Book List");
+    }
+
+    @FXML
+    void handleMenuViewMember() {
+        loadWindow(LISTMEMBER_FXML, "Member List");
+    }
+
+    @FXML
+    void handleMenuViewFullScreen() {
+        Stage stage = ((Stage)rootPane.getScene().getWindow());
+        stage.setFullScreen(!stage.isFullScreen());
+    }
+
+    @FXML
+    void handleMenuAbout() {
+
     }
 
     void clearBookCache(){

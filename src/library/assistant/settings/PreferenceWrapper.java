@@ -1,10 +1,8 @@
 package library.assistant.settings;
 
 import com.google.gson.Gson;
-import javafx.scene.control.Alert;
 import library.assistant.alert.AlertMaker;
-import org.ietf.jgss.GSSContext;
-
+import org.apache.commons.codec.digest.DigestUtils;
 import java.io.*;
 
 public class PreferenceWrapper {
@@ -18,8 +16,9 @@ public class PreferenceWrapper {
 
     public PreferenceWrapper(){
         nDaysWithoutFine = 14;
+        finePerDay = 2;
         userName = "admin";
-        password = "admin";
+        setPassword("admin");
     }
 
     public int getnDaysWithoutFine() {
@@ -51,7 +50,11 @@ public class PreferenceWrapper {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if (password.length() < 16) {
+            this.password = DigestUtils.shaHex(password);
+        } else {
+            this.password = password;
+        }
     }
 
     public static void initConfig(){

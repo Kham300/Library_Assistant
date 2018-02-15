@@ -1,7 +1,10 @@
 package library.assistant.database;
 
+import library.assistant.ui.memberList.MemberListController;
+
 import javax.swing.*;
 import java.sql.*;
+import static library.assistant.ui.listbook.BookListController.*;
 
 public class DBHandler {
 
@@ -17,7 +20,7 @@ public class DBHandler {
     private DBHandler() {
         createConnection();
         setupBookTable();
-        setupMembertable();
+        setupMemberTable();
         setupIssueTable();
     }
 
@@ -90,7 +93,7 @@ public class DBHandler {
         }
     }
 
-    private void setupMembertable() {
+    private void setupMemberTable() {
         String TABLE_NAME = "MEMBER";
         try {
             statement = dbConnection.createStatement();
@@ -126,7 +129,7 @@ public class DBHandler {
                 statement.execute("CREATE TABLE " + TABLE_NAME + "("
                             + "         bookID VARCHAR(200) PRIMARY KEY,\n"
                             + "         memberID VARCHAR(200),\n"
-                            + "         issueTime TIMESTAMP default CURRENT_TIMESTAMP ,\n"
+                            + "         issueTime TIMESTAMP default CURRENT_TIMESTAMP,\n"
                             + "         renew_count INTEGER  DEFAULT 0,\n"
                             + "         FOREIGN KEY (bookID) REFERENCES BOOK(id),\n"
                             + "         FOREIGN KEY (memberID) REFERENCES MEMBER(id)"
@@ -138,4 +141,82 @@ public class DBHandler {
         }
     }
 
+    public boolean deleteMember(MemberListController.Member member){
+        try {
+            String deleteStatement = "DELETE FROM MEMBER WHERE ID = ?";
+            PreparedStatement preparedStatement = dbConnection.prepareStatement(deleteStatement);
+            preparedStatement.setString(1, member.getId());
+            int res = preparedStatement.executeUpdate();
+            System.out.println(res);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean deleteBook(Book book){
+        try {
+            String deleteStatement = "DELETE FROM BOOK WHERE ID = ?";
+            PreparedStatement preparedStatement = dbConnection.prepareStatement(deleteStatement);
+            preparedStatement.setString(1, book.getId());
+            int res = preparedStatement.executeUpdate();
+            System.out.println(res);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isBookAlreadyIssued(Book book){
+        try {
+            String checkStmt = "SELECT COUNT(*) FROM ISSUE WHERE bookID = ?";
+            PreparedStatement preparedStatement = dbConnection.prepareStatement(checkStmt);
+            preparedStatement.setString(1, book.getId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                int count = resultSet.getInt(1);
+                if (count > 0){
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (SQLException ex){ex.printStackTrace();}
+        return false;
+    }
+
+    public boolean updateBook(Book book){
+
+        try {
+            String update = "UPDATE MEMBER SET TITLE=?, AUTHOR=?, PUBLISHER=? WHERE ID=?";
+            PreparedStatement statement = dbConnection.prepareStatement(update);
+            statement.setString(1,book.getTitle());
+            statement.setString(2, book.getAuthor());
+            statement.setString(3, book.getPublisher());
+            statement.setString(4, book.getId());
+            int res = statement.executeUpdate();
+            return (res > 0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateMember(MemberListController.Member member){
+
+        try {
+            String update ="UPDATE MEMBER SET NAME=?, MOBILE=?, EMAIL=? WHERE ID=?";
+            PreparedStatement statement = dbConnection.prepareStatement(update);
+            statement.setString(1, member.getName());
+            statement.setString(2, member.getMobile());
+            statement.setString(3, member.getEmail());
+            statement.setString(4, member.getId());
+            int res = statement.executeUpdate();
+            return (res > 0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

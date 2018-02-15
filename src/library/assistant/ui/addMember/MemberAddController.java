@@ -8,10 +8,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import library.assistant.alert.AlertMaker;
 import library.assistant.database.DBHandler;
+import library.assistant.ui.memberList.MemberListController;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static library.assistant.ui.memberList.MemberListController.*;
 
 public class MemberAddController implements Initializable{
         DBHandler dbHandler;
@@ -31,6 +35,8 @@ public class MemberAddController implements Initializable{
         @FXML
         private JFXButton cancelButton;
 
+        private Boolean isInEditMode = Boolean.FALSE;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -39,7 +45,7 @@ public class MemberAddController implements Initializable{
 
 
     @FXML
-    void addMember(ActionEvent event) {
+    void addMember() {
         String mName = name.getText();
         String mId = id.getText();
         String mMobile = mobile.getText();
@@ -51,6 +57,11 @@ public class MemberAddController implements Initializable{
             alert.setHeaderText(null);
             alert.setContentText("Please Enter in all fields");
             alert.showAndWait();
+            return;
+        }
+
+        if (isInEditMode){
+            handleUpdateMember();
             return;
         }
 
@@ -74,10 +85,30 @@ public class MemberAddController implements Initializable{
         }
     }
 
+    private void handleUpdateMember() {
+        Member member = new Member(name.getText(), id.getText(), mobile.getText(), email.getText());
+        if(dbHandler.updateMember(member)){
+            AlertMaker.showSimpleAlert("Success", "Member is updated");
+        } else {
+            AlertMaker.showErrorMessage("Failed", "Can't update member");
+        }
+    }
+
     @FXML
-    void cancel(ActionEvent event) {
+    void cancel() {
         Stage stage = (Stage) rootPane.getScene().getWindow();
         stage.close();
+    }
+
+    public void inFlateUI(Member member){
+
+        name.setText(member.getName());
+        id.setText(member.getId());
+        id.setEditable(false);
+        mobile.setText(member.getMobile());
+        email.setText(member.getEmail());
+
+        isInEditMode = Boolean.TRUE;
     }
 
 }

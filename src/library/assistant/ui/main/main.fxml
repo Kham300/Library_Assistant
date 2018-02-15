@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="library.assistant.ui.main.MainController">
+<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="library.assistant.ui.main.MainController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -28,17 +28,25 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Close" />
+                    <MenuItem mnemonicParsing="false" onAction="#handleMenuClose" text="Close" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="Add">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
+                    <MenuItem mnemonicParsing="false" onAction="#handleMenuAddBook" text="Add Book" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleMenuAddMember" text="Add Member" />
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="View">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleMenuViewBook" text="View Book" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleMenuViewMember" text="View Member" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleMenuViewFullScreen" text="Full Screen" />
+                     </items>
+                  </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
+                    <MenuItem mnemonicParsing="false" onAction="#handleMenuAbout" text="About" />
                   </items>
                 </Menu>
               </menus>
@@ -47,13 +55,13 @@
          <right>
             <VBox prefHeight="475.0" prefWidth="140.0" BorderPane.alignment="CENTER">
                <children>
-                  <VBox prefHeight="476.0" prefWidth="140.0">
+                  <VBox>
                      <children>
                         <Button contentDisplay="TOP" mnemonicParsing="false" onAction="#loadAddMember" prefHeight="150.0" prefWidth="200.0" text="Add Member">
                            <graphic>
                               <ImageView fitHeight="36.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../icons/add-contact.png" />
+                                    <Image url="@../../../../resources/icons/add-contact.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -62,7 +70,7 @@
                            <graphic>
                               <ImageView fitHeight="36.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../icons/book-and-plus-sign.png" />
+                                    <Image url="@../../../../resources/icons/book-and-plus-sign.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -71,7 +79,7 @@
                            <graphic>
                               <ImageView fitHeight="36.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../icons/team.png" />
+                                    <Image url="@../../../../resources/icons/team.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -80,7 +88,7 @@
                            <graphic>
                               <ImageView fitHeight="36.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../icons/books-stack-of-three.png" />
+                                    <Image url="@../../../../resources/icons/books-stack-of-three.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -89,7 +97,7 @@
                            <graphic>
                               <ImageView fitHeight="36.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../icons/settings.png" />
+                                    <Image url="@../../../../resources/icons/settings.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -169,7 +177,7 @@
                                              <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../icons/end-user-issue.png" />
+                                                      <Image url="@../../../../resources/icons/end-user-issue.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic></JFXButton>
@@ -207,7 +215,7 @@
                                              <graphic>
                                                 <ImageView fitHeight="32.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../icons/recycle-sign.png" />
+                                                      <Image url="@../../../../resources/icons/recycle-sign.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic></JFXButton>
@@ -218,7 +226,7 @@
                                              <graphic>
                                                 <ImageView fitHeight="27.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../icons/tick-inside-circle.png" />
+                                                      <Image url="@../../../../resources/icons/tick-inside-circle.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic></JFXButton>

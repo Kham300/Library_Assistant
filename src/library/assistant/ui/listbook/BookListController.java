@@ -5,17 +5,29 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import library.assistant.alert.AlertMaker;
 import library.assistant.database.DBHandler;
 import library.assistant.ui.addBook.BookAddController;
+import library.assistant.ui.main.MainController;
+import library.assistant.utils.LibraryAssistantUtils;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,8 +65,9 @@ public class BookListController implements Initializable {
         availableCol.setCellValueFactory(new PropertyValueFactory<>("availability"));
     }
 
-
     private void loadData() {
+        bookObservableList.clear();
+
         DBHandler dbHandler = DBHandler.getInstance();
         String query = "SELECT * FROM BOOK";
         ResultSet resultSet = dbHandler.executQuery(query);
@@ -74,6 +87,57 @@ public class BookListController implements Initializable {
         tableView.getItems().setAll(bookObservableList);
     }
 
+    @FXML
+    public void handleBookDeleteOption() {
+        Book selectedForDeletion = tableView.getSelectionModel().getSelectedItem();
+        if (selectedForDeletion == null){
+            AlertMaker.showErrorMessage("No Book selected", "Please select a book for deletion");
+            return;
+        }
+        if (DBHandler.getInstance().isBookAlreadyIssued(selectedForDeletion)){
+            AlertMaker.showErrorMessage("Can't BE Deleted", "This book is already Issued and cant be deleted!");
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Deleting book");
+        alert.setContentText("Are you sure  to delete the book " + selectedForDeletion.getTitle() + " ?");
+        Optional<ButtonType> answer = alert.showAndWait();
+        if (answer.get() == ButtonType.OK){
+            boolean result = DBHandler.getInstance().deleteBook(selectedForDeletion);
+            if (result){
+                AlertMaker.showSimpleAlert("Book deleted", selectedForDeletion.getTitle() + " was deleted successfully");
+            } else {
+                AlertMaker.showSimpleAlert("Deletion failed", selectedForDeletion.getTitle() + " could not be deleted!");
+            }
+        } else {
+            AlertMaker.showSimpleAlert("Deletion cancelled", "Deletion process cancelled");
+        }
+    }
+
+    @FXML
+    public void handleBookEditOption() {
+        Book selectedForEdit = tableView.getSelectionModel().getSelectedItem();
+        if (selectedForEdit == null){
+            AlertMaker.showErrorMessage("No Book selected", "Please select a book for editing");
+            return;
+        } try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/library/assistant/ui/addBook/add_book.fxml"));
+            Parent parent = loader.load();
+
+            BookAddController controller = (BookAddController) loader.getController();
+            controller.inFlateUI(selectedForEdit);
+            Stage stage = new Stage(StageStyle.DECORATED);
+            stage.setTitle("Edit Book");
+            stage.setScene(new Scene(parent));
+            stage.show();
+            LibraryAssistantUtils.setStageIcon(stage);
+            //refresh automatically the ne data in booklist
+            stage.setOnCloseRequest((e) -> handleBookRefreshOption());
+        } catch (IOException e) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
     public static class Book{
 
         private final SimpleStringProperty title;
@@ -89,6 +153,7 @@ public class BookListController implements Initializable {
             this.publisher = new SimpleStringProperty(publisher);
             this.availability = new SimpleBooleanProperty(availability);
         }
+
 
         public String getTitle() {
             return title.get();
@@ -111,6 +176,12 @@ public class BookListController implements Initializable {
             return availability.get();
         }
 
+    }
+
+
+    @FXML
+    void handleBookRefreshOption() {
+        loadData();
     }
 }
 
