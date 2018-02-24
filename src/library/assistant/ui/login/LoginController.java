@@ -25,8 +25,6 @@ import java.util.logging.Logger;
 public class LoginController implements Initializable {
 
     @FXML
-    private Label titleLabel;
-    @FXML
     private JFXTextField login;
     @FXML
     private JFXPasswordField password;
@@ -44,8 +42,6 @@ public class LoginController implements Initializable {
 
     @FXML
     void handleLoginButtonAction() {
-        titleLabel.setText("Library Assistant Label");
-        titleLabel.setStyle("-fx-background-color:black; -fx-text-fill: white");
         String uname = login.getText();
         String upass = DigestUtils.shaHex(password.getText());
 
@@ -54,8 +50,8 @@ public class LoginController implements Initializable {
             closeStage();
             loadMain();
         } else {
-            titleLabel.setText("Invalid credentails");
-            titleLabel.setStyle("-fx-background-color:#d32f2f; -fx-text-fill: white");
+            login.getStyleClass().add("wrong-credentials");
+            password.getStyleClass().add("wrong-credentials");
         }
     }
 

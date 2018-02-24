@@ -1,5 +1,8 @@
 package library.assistant.database;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.PieChart;
 import library.assistant.ui.memberList.MemberListController;
 
 import javax.swing.*;
@@ -12,8 +15,8 @@ public class DBHandler {
 
     private static final String DB_USER ="root";
     private static final String DB_PASS = "root";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/library?" +
-            "useSSL=true&amp;autoReconnect=true&amp;serverTimezone=UTC";
+    private static final String DB_URL  = "jdbc:mysql://localhost:3306/library?" +
+                                         "useSSL=true&amp;autoReconnect=true&amp;serverTimezone=UTC";
     private static Connection dbConnection;
     private static Statement statement;
 
@@ -154,6 +157,7 @@ public class DBHandler {
         }
         return false;
     }
+
     public boolean deleteBook(Book book){
         try {
             String deleteStatement = "DELETE FROM BOOK WHERE ID = ?";
@@ -204,7 +208,6 @@ public class DBHandler {
     }
 
     public boolean updateMember(MemberListController.Member member){
-
         try {
             String update ="UPDATE MEMBER SET NAME=?, MOBILE=?, EMAIL=? WHERE ID=?";
             PreparedStatement statement = dbConnection.prepareStatement(update);
@@ -219,4 +222,45 @@ public class DBHandler {
         }
         return false;
     }
+
+    public ObservableList<PieChart.Data> getBookGraphStatistics(){
+        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+        try{
+
+            String qu1 = "SELECT COUNT(*) FROM BOOK";
+            String qu2 = "SELECT COUNT(*) FROM ISSUE";
+            ResultSet resultSet = executQuery(qu1);
+            if (resultSet.next()){
+                int count = resultSet.getInt(1);
+                data.add(new PieChart.Data("Total Books(" + count+ ")", count));
+            }
+            resultSet = executQuery(qu2);
+            if (resultSet.next()){
+                int count = resultSet.getInt(1);
+                data.add(new PieChart.Data("Issued Books(" + count+ ")", count));
+            }
+        } catch (SQLException e) { e.printStackTrace();}
+        return data;
+    }
+
+    public ObservableList<PieChart.Data> getMemberGraphStatistics(){
+        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+        try{
+
+            String qu1 = "SELECT COUNT(*) FROM MEMBER";
+            String qu2 = "SELECT COUNT(DISTINCT memberID) FROM ISSUE";
+            ResultSet resultSet = executQuery(qu1);
+            if (resultSet.next()){
+                int count = resultSet.getInt(1);
+                data.add(new PieChart.Data("Total Members(" + count+ ")", count));
+            }
+            resultSet = executQuery(qu2);
+            if (resultSet.next()){
+                int count = resultSet.getInt(1);
+                data.add(new PieChart.Data("Members with books(" + count+ ")", count));
+            }
+        } catch (SQLException e) { e.printStackTrace();}
+        return data;
+    }
+
 }

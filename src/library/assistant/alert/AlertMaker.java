@@ -122,4 +122,24 @@ public class AlertMaker {
         });
         nodeToBeBlurred.setEffect(blur);
     }
+
+    public static void showMaterialDialog(StackPane rootPane, Node nodeToBeBlurred, List<JFXButton> controls){
+        BoxBlur blur = new BoxBlur(3,3,3);
+
+        JFXDialogLayout dialogLayout = new JFXDialogLayout();
+        JFXDialog dialog = new JFXDialog(rootPane, dialogLayout, JFXDialog.DialogTransition.TOP);
+
+        controls.forEach(controlBtn ->{
+            controlBtn.getStyleClass().add("dialog-button");
+            controlBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent mouseEvent) -> {
+            dialog.close();
+
+            });
+        });
+        dialogLayout.setHeading(new Label("No such book exists in Issue"));
+        dialogLayout.setActions(controls);
+        dialog.show();
+        dialog.setOnDialogClosed(event -> nodeToBeBlurred.setEffect(null));
+        nodeToBeBlurred.setEffect(blur);
+    }
 }
